@@ -1,7 +1,12 @@
 import { Box, Flex } from '@chakra-ui/react';
 import TalentCard from '../talentCard';
 
-const TalentsGrid = ({ data, setSelectedTalent }) => {
+const TalentsGrid = ({
+  data,
+  setSelectedTalent,
+  filteredData,
+  setFilteredData,
+}) => {
   return (
     <Box maxW="1200px" mx="auto">
       <Flex justifyContent="center" flexWrap="wrap">

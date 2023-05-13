@@ -1,22 +1,35 @@
-import { Box, Flex, Text, Button, Avatar } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  Avatar,
+  useColorMode,
+} from '@chakra-ui/react';
 import { FiMessageSquare } from 'react-icons/fi';
 import topRatedStarIcon from '../../../../../../assets/images/topRatedStarIcon.png';
 import topRatedTickIcon from '../../../../../../assets/images/topRatedTickIcon.png';
 
 const TalentCard = ({ talent, setSelectedTalent }) => {
+  const { colorMode } = useColorMode();
   return (
     <Box
       p={4}
       boxShadow="md"
       rounded="lg"
-      bg="white"
       maxW="sm"
       maxH="315px"
       mx={2}
       my={2}
       textAlign="center"
+      variant="outline"
       borderWidth="1px"
-      borderColor="gray.300"
+      colorScheme="gray"
+      style={
+        colorMode === 'dark'
+          ? { background: '#090B0C' }
+          : { background: '#fff' }
+      }
     >
       <Flex justifyContent="center">
         <Flex position="relative" align="center" justify="center" mb={2}>
@@ -30,18 +43,34 @@ const TalentCard = ({ talent, setSelectedTalent }) => {
             py={1}
             width="77px"
             height="36px"
-            bg="rgba(255, 255, 255, 0.72)"
             color="white"
             rounded="12px"
-            css={{
-              zIndex: 5,
-              backdropFilter: 'blur(4px)',
-            }}
+            css={
+              colorMode === 'dark'
+                ? {
+                    zIndex: 5,
+                    background: 'rgba(0, 0, 0, 0.48)',
+                    backdropFilter: 'blur(4px)',
+                  }
+                : {
+                    zIndex: 5,
+                    background: 'rgba(255, 255, 255, 0.72)',
+                    backdropFilter: 'blur(4px)',
+                  }
+            }
           >
-            <Text fontWeight="600" fontSize="14" color="#090B0C">
+            <Text
+              fontWeight="600"
+              fontSize="14"
+              color={colorMode === 'dark' ? '#fff' : '#090B0C'}
+            >
               ${talent?.hourlyRate}
             </Text>
-            <Text fontSize="10" fontWeight="600" color="#090B0C">
+            <Text
+              fontSize="10"
+              fontWeight="600"
+              color={colorMode === 'dark' ? '#fff' : '#090B0C'}
+            >
               /hour
             </Text>
           </Flex>
@@ -69,7 +98,7 @@ const TalentCard = ({ talent, setSelectedTalent }) => {
           src={talent?.profileImage}
           size="l"
           borderWidth="3px"
-          borderColor="white"
+          borderColor={colorMode === 'dark' ? '#000' : 'white'}
         />
         <img
           src={topRatedStarIcon}
@@ -112,18 +141,18 @@ const TalentCard = ({ talent, setSelectedTalent }) => {
           {talent?.desc}
         </Text>
         <Flex justifyContent="center" mb={4}>
-          {talent.tags.map((tag, i) => (
+          {talent.services.map((service, i) => (
             <Button
               key={i}
               fontSize="12"
               fontWeight="600"
-              variant="outline"
               rounded="full"
+              variant="outline"
               borderWidth="1px"
               colorScheme="gray"
               mr={2}
             >
-              {tag}
+              {service}
             </Button>
           ))}
           <Button

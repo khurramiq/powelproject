@@ -5,19 +5,36 @@ import caretDown from '../../../../../../../../assets/images/caretDown.png';
 import caretUp from '../../../../../../../../assets/images/caretUp.png';
 import serviceIcon from '../../../../../../../../assets/images/serviceIcon.png';
 import sortByIcon from '../../../../../../../../assets/images/sortByIcon.png';
+import circleCross from '../../../../../../../../assets/images/circleCross.png';
 import PriceFilter from '../priceFilter';
 import SortByFilter from '../sortByFilter';
 import { useState } from 'react';
 
-const Filters = () => {
+const Filters = ({ data, filteredData, setFilteredData }) => {
   const [sortByFilterOpen, setSortByFilterOpen] = useState(false);
   const [priceFilterOpen, setPriceFilterOpen] = useState(false);
+  const [sortByText, setSortByText] = useState('Rating');
+  const [priceRange, setPriceRange] = useState([10, 100]);
+  const [priceFilterText, setPriceFilterText] = useState('All');
+
+  const resetAll = () => {
+    setFilteredData(data.sort((a, b) => b.rating - a.rating));
+    setPriceRange([10, 100]);
+    setSortByText('Rating');
+    setPriceFilterText('All');
+  };
+  const resetPossible = () => {
+    if (priceFilterText !== 'All') {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <Flex
       justifyContent="space-between"
       alignItems="center"
       mt={4}
-      bg="white"
       rounded="lg"
     >
       {/* Left Side */}
@@ -29,26 +46,53 @@ const Filters = () => {
             px={4}
             mr={2}
             alignItems="center"
+            variant="outline"
             borderWidth="1px"
+            colorScheme="gray"
             rounded="full"
-            borderColor="gray.200"
             cursor="pointer"
             onClick={() => setPriceFilterOpen(prev => !prev)}
           >
-            <img src={dolorIcon} alt="dolorIcon" />
+            <img
+              src={dolorIcon}
+              alt="dolorIcon"
+              style={{ background: '#fff' }}
+            />
             <Text ml={2} fontSize="sm" color="#878F9A">
               Price per hr:
             </Text>
-            <Text ml={1} mr={2} color="#090B0C">
-              All
+            <Text ml={1} mr={2} fontSize="14" fontWeight="600">
+              {priceFilterText}
             </Text>
-            <img src={priceFilterOpen ? caretUp : caretDown} alt="caretDown" />
+            {priceFilterText !== 'All' && (
+              <img
+                src={circleCross}
+                alt="circleCross"
+                style={{ marginRight: '8px', backgroundColor: '#fff' }}
+              />
+            )}
+            {/* <img
+              src={priceFilterOpen ? caretUp : caretDown}
+              alt="caretDown"
+              style={{ backgroundColor: '#fff' }}
+            /> */}
+            {priceFilterOpen ? (
+              <i className="fal fa-angle-up" style={{ fontSize: '18px' }}></i>
+            ) : (
+              <i className="fal fa-angle-down" style={{ fontSize: '18px' }}></i>
+            )}
           </Flex>
 
           {priceFilterOpen && (
             <PriceFilter
               priceFilterOpen={priceFilterOpen}
               setPriceFilterOpen={setPriceFilterOpen}
+              setPriceFilterText={setPriceFilterText}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              data={data}
+              setFilteredData={setFilteredData}
+              sortByText={sortByText}
             />
           )}
         </Box>
@@ -57,20 +101,25 @@ const Filters = () => {
           px={4}
           mr={2}
           alignItems="center"
+          variant="outline"
           borderWidth="1px"
+          colorScheme="gray"
           rounded="full"
-          borderColor="gray.200"
           cursor="pointer"
           position="relative"
         >
-          <img src={serviceIcon} alt="serviceIcon" />
+          <img
+            src={serviceIcon}
+            alt="serviceIcon"
+            style={{ background: '#fff' }}
+          />
           <Text ml={2} fontSize="sm" color="#878F9A">
             Services :
           </Text>
-          <Text ml={1} mr={2} color="#090B0C">
+          <Text ml={1} mr={2} fontSize="14" fontWeight="600">
             All
           </Text>
-          <img src={caretDown} alt="caretDown" />
+          <i className="fal fa-angle-down" style={{ fontSize: '18px' }}></i>
         </Flex>
         <Box position="relative">
           <Flex
@@ -79,27 +128,61 @@ const Filters = () => {
             mr={2}
             alignItems="center"
             rounded="full"
+            variant="outline"
             borderWidth="1px"
-            borderColor="gray.200"
+            colorScheme="gray"
             cursor="pointer"
             onClick={() => setSortByFilterOpen(prev => !prev)}
           >
-            <img src={sortByIcon} alt="sortByIcon" />
+            <img
+              src={sortByIcon}
+              alt="sortByIcon"
+              style={{ background: '#fff' }}
+            />
             <Text ml={2} fontSize="sm" color="#878F9A">
               Sort by :
             </Text>
-            <Text ml={1} mr={2} color="#090B0C">
-              Rating
+            <Text ml={1} mr={2} fontSize="14" fontWeight="600">
+              {sortByText}
             </Text>
-            <img src={sortByFilterOpen ? caretUp : caretDown} alt="caretDown" />
+            {sortByFilterOpen ? (
+              <i className="fal fa-angle-up" style={{ fontSize: '18px' }}></i>
+            ) : (
+              <i className="fal fa-angle-down" style={{ fontSize: '18px' }}></i>
+            )}
           </Flex>
           {sortByFilterOpen && (
             <SortByFilter
               sortByFilterOpen={sortByFilterOpen}
               setSortByFilterOpen={setSortByFilterOpen}
+              data={data}
+              setFilteredData={setFilteredData}
+              sortByText={sortByText}
+              setSortByText={setSortByText}
+              priceRange={priceRange}
+              priceFilterText={priceFilterText}
             />
           )}
         </Box>
+        {resetPossible() && (
+          <Flex
+            p={2}
+            px={4}
+            mr={2}
+            alignItems="center"
+            variant="outline"
+            borderWidth="1px"
+            colorScheme="gray"
+            rounded="full"
+            cursor="pointer"
+            position="relative"
+            onClick={() => resetAll()}
+          >
+            <Text ml={1} mr={2} fontSize="14" fontWeight="600">
+              Reset all
+            </Text>
+          </Flex>
+        )}
       </Flex>
 
       {/* Right Side */}

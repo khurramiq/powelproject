@@ -1,12 +1,23 @@
-import { Box, Flex, Text, Button, Avatar } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  Avatar,
+  useColorMode,
+} from '@chakra-ui/react';
 import { FiMessageSquare } from 'react-icons/fi';
+import topRatedStarIcon from '../../../../../../assets/images/topRatedStarIcon.png';
+import topRatedTickIcon from '../../../../../../assets/images/topRatedTickIcon.png';
 
 const TalentListItem = ({ talent, setSelectedTalent }) => {
+  const { colorMode } = useColorMode();
   return (
     <Box
       p={2}
+      variant="outline"
       borderWidth="1px"
-      borderColor="gray.300"
+      colorScheme="gray"
       borderRadius="20px"
       width="100%"
       my={2}
@@ -14,12 +25,39 @@ const TalentListItem = ({ talent, setSelectedTalent }) => {
     >
       <Flex justifyContent="space-between">
         <Box maxW="33%">
-          <Flex>
+          <Flex position="relative">
             <Avatar
               src={talent?.profileImage}
               size="md"
               borderWidth="2px"
-              borderColor="white"
+              borderColor={colorMode === 'dark' ? '#000' : 'white'}
+            />
+            <img
+              src={topRatedStarIcon}
+              alt="topRatedStarIcon"
+              style={
+                talent.topRated
+                  ? {
+                      position: 'absolute',
+                      top: '30px',
+                      left: '30px',
+                    }
+                  : { display: 'none' }
+              }
+            />
+            <img
+              src={topRatedTickIcon}
+              alt="topRatedTickIcon"
+              style={
+                talent.topRated
+                  ? {
+                      position: 'absolute',
+                      top: '38px',
+                      left: '36px',
+                      zIndex: 1,
+                    }
+                  : { display: 'none' }
+              }
             />
             <Flex flexDirection="column" ml={4}>
               <Text fontSize="16" fontWeight="700">
@@ -51,7 +89,7 @@ const TalentListItem = ({ talent, setSelectedTalent }) => {
           </Flex>
         </Box>
         <Flex>
-          {talent.tags.map((tag, i) => (
+          {talent.services.map((service, i) => (
             <Button
               key={i}
               fontSize="12"
@@ -61,7 +99,7 @@ const TalentListItem = ({ talent, setSelectedTalent }) => {
               borderWidth="1px"
               mr={2}
             >
-              {tag}
+              {service}
             </Button>
           ))}
           <Button variant="outline" rounded="full" borderWidth="1px">

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box } from '@chakra-ui/react';
+import { Box, useColorMode } from '@chakra-ui/react';
 import React, { useEffect, useRef } from 'react';
 
 /**
@@ -28,9 +28,63 @@ function useOutsideAlerter(ref, setSortByFilterOpen) {
  * Component that alerts if you click outside of it
  */
 
-const SortByFilter = ({ sortByFilterOpen, setSortByFilterOpen }) => {
+const SortByFilter = ({
+  sortByFilterOpen,
+  setSortByFilterOpen,
+  data,
+  setFilteredData,
+  sortByText,
+  setSortByText,
+  priceRange,
+  priceFilterText,
+}) => {
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, setSortByFilterOpen);
+
+  const sortByRating = () => {
+    if (priceFilterText === 'All') {
+      setFilteredData(data.sort((a, b) => b.rating - a.rating));
+    } else {
+      const tempData = data.filter(
+        obj =>
+          obj.hourlyRate >= priceRange[0] && obj.hourlyRate <= priceRange[1]
+      );
+      setFilteredData(tempData.sort((a, b) => b.rating - a.rating));
+    }
+  };
+  const sortByPricePerHour = () => {
+    if (priceFilterText === 'All') {
+      setFilteredData(data.sort((a, b) => b.hourlyRate - a.hourlyRate));
+    } else {
+      const tempData = data.filter(
+        obj =>
+          obj.hourlyRate >= priceRange[0] && obj.hourlyRate <= priceRange[1]
+      );
+      setFilteredData(tempData.sort((a, b) => b.hourlyRate - a.hourlyRate));
+    }
+  };
+  const sortByTopRated = () => {
+    if (priceFilterText === 'All') {
+      setFilteredData(
+        data.sort((a, b) =>
+          a.topRated === b.topRated ? 0 : a.topRated ? -1 : 1
+        )
+      );
+    } else {
+      const tempData = data.filter(
+        obj =>
+          obj.hourlyRate >= priceRange[0] && obj.hourlyRate <= priceRange[1]
+      );
+      setFilteredData(
+        tempData.sort((a, b) =>
+          a.topRated === b.topRated ? 0 : a.topRated ? -1 : 1
+        )
+      );
+    }
+  };
+
+  const { colorMode } = useColorMode();
+
   return (
     <>
       <div
@@ -52,31 +106,50 @@ const SortByFilter = ({ sortByFilterOpen, setSortByFilterOpen }) => {
         position="absolute"
         top="50"
         left="0"
-        bg="white"
+        variant="outline"
         borderWidth="1px"
-        borderColor="gray.200"
+        colorScheme="gray"
         rounded="md"
         zIndex="100"
+        style={
+          colorMode === 'dark'
+            ? { background: '#090B0C' }
+            : { background: '#fff' }
+        }
       >
         <Box
           p={2}
-          _hover={{ bg: 'gray.100' }}
-          fontWeight="bold"
-          onClick={() => setSortByFilterOpen(false)}
+          cursor="pointer"
+          onClick={() => {
+            setSortByText('Rating');
+            sortByRating();
+            setSortByFilterOpen(false);
+          }}
+          css={sortByText === 'Rating' ? { fontWeight: 'bold' } : null}
         >
           Rating
         </Box>
         <Box
           p={2}
-          _hover={{ bg: 'gray.100' }}
-          onClick={() => setSortByFilterOpen(false)}
+          cursor="pointer"
+          onClick={() => {
+            setSortByText('Price per hr');
+            sortByPricePerHour();
+            setSortByFilterOpen(false);
+          }}
+          css={sortByText === 'Price per hr' ? { fontWeight: 'bold' } : null}
         >
           Price per hr
         </Box>
         <Box
           p={2}
-          _hover={{ bg: 'gray.100' }}
-          onClick={() => setSortByFilterOpen(false)}
+          cursor="pointer"
+          onClick={() => {
+            setSortByText('Top rated');
+            sortByTopRated();
+            setSortByFilterOpen(false);
+          }}
+          css={sortByText === 'Top rated' ? { fontWeight: 'bold' } : null}
         >
           Top rated
         </Box>

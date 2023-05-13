@@ -3,19 +3,19 @@ import serviceSerchIcon from '../../../../assets/images/serviceSerchIcon.png';
 import servicePopleIcon from '../../../../assets/images/servicePopleIcon.png';
 import React from 'react';
 
-const ServiceSearchItem = () => {
+const ServiceSearchItem = ({ item }) => {
   return (
     <Flex align="center" justifyContent="space-between" px={4} mb={2}>
       <Flex align="center">
-        <img src={serviceSerchIcon} alt="serviceSerchIcon" />
+        <i className="fal fa-search"></i>
         <Text fontSize="14" ml={2}>
-          UI Design
+          {item?.service}
         </Text>
       </Flex>
       <Flex align="center">
-        <img src={servicePopleIcon} alt="servicePopleIcon" />
+        <i className="fal fa-users"></i>
         <Text fontSize="12" ml={2}>
-          435
+          {item?.talents?.length}
         </Text>
       </Flex>
     </Flex>

@@ -10,44 +10,106 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  useColorMode,
 } from '@chakra-ui/react';
 import { FiMessageSquare, FiBell } from 'react-icons/fi';
-import { BiChevronDown } from 'react-icons/bi'; // Example: using BiChevronDown as arrow icon
-import logo from '../../assets/images/logo.svg';
+import logo from '../../assets/images/logo.png';
 import profileImg from '../../assets/images/profile-img.svg';
 import homeIcon from '../../assets/images/home.svg';
 import myNetworkIcon from '../../assets/images/myNetwork.svg';
 import jobsIcon from '../../assets/images/jobs.svg';
-import searchIcon from '../../assets/images/searchIcon.png';
-import slashIcon from '../../assets/images/slashIcon.png';
 import profileCaretDown from '../../assets/images/profileCaretDown.png';
 import SearchDropdown from './components/searchDropdown';
+import { ColorModeSwitcher } from '../../ColorModeSwitcher';
 import { useState } from 'react';
 
-const Navbar = () => {
-  const [searchDropdwonOpen, setSearchDropdwonOpen] = useState(false);
+const Navbar = ({
+  data,
+  searchText,
+  setSearchText,
+  searchedTalents,
+  setSearchedTalents,
+  searchedServices,
+  setSearchedServices,
+  setFilteredData,
+}) => {
+  const { colorMode } = useColorMode();
+  const [openSearchDropdown, setOpenSearchDropdown] = useState(false);
+
+  const handleSearch = text => {
+    setSearchText(text);
+    if (!openSearchDropdown) {
+      setOpenSearchDropdown(true);
+    } else if (text === '') {
+      setOpenSearchDropdown(false);
+    }
+    const temA = data.filter(obj =>
+      obj.name.toLowerCase().includes(text.toLowerCase())
+    );
+    setSearchedTalents(temA);
+    const resultArray = [];
+
+    data.forEach(item => {
+      item.services.forEach(service => {
+        if (service.toLowerCase().includes(text.toLowerCase())) {
+          const existingResult = resultArray.find(
+            result => result.service === service
+          );
+          if (existingResult) {
+            existingResult.talents.push(item);
+          } else {
+            resultArray.push({ service: service, talents: [item] });
+          }
+        }
+      });
+    });
+    console.log('filteredItems', resultArray);
+    let newArr = [];
+    for (let i = 0; i < resultArray.length; i++) {
+      const element = resultArray[i];
+      newArr = newArr.concat(element.talents);
+    }
+    newArr = newArr.concat(temA);
+    const uniqueArray = newArr.filter(
+      (obj, index, self) => index === self.findIndex(el => el.name === obj.name)
+    );
+    setFilteredData(uniqueArray);
+    setSearchedServices(resultArray);
+  };
+
+  const handleKeyPress = event => {
+    if (event.key === 'Enter') {
+      setOpenSearchDropdown(false);
+    }
+  };
+
   return (
-    <Box p={4}>
+    <Box p={4} css={colorMode === 'dark' ? { background: '#090B0C' } : null}>
       <Flex align="center" maxW="1200px" mx="auto">
         {/* Logo */}
-        <Box>
-          <a href="/">
+        <a href="/">
+          <Flex align="center">
             <img src={logo} alt="Logo" />
-          </a>
-        </Box>
+            <Text ml={2} fontSize="24" fontWeight="800">
+              DKSH
+            </Text>
+          </Flex>
+        </a>
 
         {/* Search Bar */}
-        <Flex
-          position="relative"
-          align="center"
-          ml={4}
-          rounded="10px"
-          bg="#FBFBFC;"
-        >
-          <InputGroup flex="1">
+        <Flex position="relative" align="center" ml={10}>
+          <InputGroup
+            flex="1"
+            rounded="lg"
+            css={
+              colorMode === 'light'
+                ? { background: '#FBFBFC' }
+                : { background: '#121619' }
+            }
+          >
             <InputLeftElement
               pointerEvents="none"
-              children={<img src={searchIcon} alt="searchIcon" />}
+              children={<i className="fal fa-search"></i>}
             />
             <Input
               type="text"
@@ -55,13 +117,28 @@ const Navbar = () => {
               width="400px"
               borderWidth="0"
               css={{ fontSize: '12' }}
+              value={searchText}
+              onChange={e => handleSearch(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
             <InputRightElement
               pointerEvents="none"
-              children={<img src={slashIcon} alt="searchIcon" />}
+              children={
+                <i
+                  className="fal fa-slash"
+                  style={{ transform: 'rotate(90deg)' }}
+                ></i>
+              }
             />
           </InputGroup>
-          {searchDropdwonOpen && <SearchDropdown />}
+          {openSearchDropdown && (
+            <SearchDropdown
+              searchedTalents={searchedTalents}
+              searchedServices={searchedServices}
+              openSearchDropdown={openSearchDropdown}
+              setOpenSearchDropdown={setOpenSearchDropdown}
+            />
+          )}
         </Flex>
         <Spacer />
         {/* Navigation Links */}
@@ -109,6 +186,8 @@ const Navbar = () => {
             variant="ghost"
           />
         </Box>
+
+        <ColorModeSwitcher justifySelf="flex-end" />
 
         {/* Profile Name, Avatar, and Arrow Down */}
         <Box ml={2}>
